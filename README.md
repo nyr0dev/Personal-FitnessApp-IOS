@@ -1,6 +1,6 @@
 # ⚡️ Nyr0
 
-A mega-premium, personal workout tracker specifically optimized for **iPhone 16 Pro Max**.
+A personal workout tracker specifically for IOS.
 
 ## ✨ Features
 - 💎 **OLED Dark Mode:** Deep blacks and neon accents designed for High-End mobile displays.
