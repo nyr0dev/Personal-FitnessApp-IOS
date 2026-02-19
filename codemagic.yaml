@@ -3,24 +3,29 @@ workflows:
     name: iOS Build Workflow
     instance_type: mac_mini_m2
     max_build_duration: 120
+
     environment:
       xcode: latest
       ios_signing:
         distribution_type: development
+        bundle_identifier: com.nyr0dev.PersonalFitnessApp
+
     scripts:
-      - name: Initialize Project Structure
-        script: | 
-          # Bu kısım Mac olmadan proje dosyası oluşturmaya çalışır
-          echo "Project is being initialized..."
-      - name: Build iOS App
-        script: | 
-          # Burada derleme komutları çalışacak
-          # Not: .xcodeproj dosyası olmadığı için hata alma ihtimalimiz var
-          # Ama Codemagic bunu aşmaya çalışacak.
-          xcodebuild build -scheme FitnessApp -destination 'generic/platform=iOS'
+      - name: Install dependencies
+        script: |
+          echo "Installing dependencies..."
+          xcodebuild -version
+
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --project "Personal-FitnessApp-IOS.xcodeproj" \
+            --scheme "FitnessApp"
+
     artifacts:
       - build/ios/ipa/*.ipa
+
     publishing:
       email:
         recipients:
-          - nyr0d.contact@gmail.com # Screenshot'taki mailin
+          - nyr0d.contact@gmail.com
