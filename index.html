@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NYR0 | ELITE FITNESS</title>
+    <!-- iOS Lock-in -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nyr0">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/192/FF3D68/FFFFFF?text=Nyr0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Floating Glass Header -->
+        <header class="header">
+            <div class="header-inner">
+                <div class="user-info">
+                    <span class="date-pill" id="current-date">FEB 19, THURSDAY</span>
+                    <h1 class="glitch-title" id="main-heading">DAILY PUMP</h1>
+                </div>
+                <div class="streak-badge">
+                    <span class="fire">🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Overview Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="val" id="stat-progress">0%</span>
+                <span class="lbl">COMPLETE</span>
+            </div>
+            <div class="stat-card accent">
+                <span class="val" id="stat-next">17:00</span>
+                <span class="lbl">ALERT</span>
+            </div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <main class="content-area" id="view-container">
+            <!-- Dynamic Content Injected Here -->
+        </main>
+
+        <!-- Dynamic Island inspired Tab Bar -->
+        <nav class="nav-bar">
+            <div class="nav-pills">
+                <button class="nav-item active" onclick="switchView('today')">
+                    <span class="icon">🏠</span>
+                    <span class="label">TODAY</span>
+                </button>
+                <button class="nav-item" onclick="switchView('week')">
+                    <span class="icon">📅</span>
+                    <span class="label">WEEK</span>
+                </button>
+                <button class="nav-item" onclick="switchView('profile')">
+                    <span class="icon">👤</span>
+                    <span class="label">NYR0</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Micro-Interaction Overlay -->
+    <div id="haptic-overlay"></div>
+
+    <script src="src/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+{
+    "name": "nyr0-elite-fitness",
+    "version": "1.0.0",
+    "description": "Premium Workout Tracker for Nyr0",
+    "main": "index.html",
+    "scripts": {
+        "start": "npx -y serve .",
+        "build": "echo 'No build step needed for static site'"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "serve": "^14.2.1"
+    }
+}
