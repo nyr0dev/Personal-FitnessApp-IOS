@@ -1,6 +1,146 @@
 // NYR0 Personal Fitness - v2.0
 // iPhone 16 Pro Max optimized
 
+// ─── i18n ───
+const TRANSLATIONS = {
+    en: {
+        days: {
+            "Monday": "Monday", "Tuesday": "Tuesday", "Wednesday": "Wednesday",
+            "Thursday": "Thursday", "Friday": "Friday", "Saturday": "Saturday", "Sunday": "Sunday"
+        },
+        months: ["January", "February", "March", "April", "May", "June",
+                 "July", "August", "September", "October", "November", "December"],
+        streakLabel: "days",
+        headerTitle: "DAILY WORKOUT",
+        statCompleted: "COMPLETED",
+        statMoves: "MOVES",
+        statTotal: "TOTAL",
+        navToday: "TODAY",
+        navWeek: "WEEK",
+        navProfile: "PROFILE",
+        restDay: "REST DAY",
+        restSubtitle: "Rest today, come back stronger tomorrow",
+        allDoneText: "TODAY'S WORKOUT COMPLETED",
+        weeklyPlan: "WEEKLY PLAN",
+        weekRest: "REST",
+        weekDone: "DONE",
+        weekToday: "TODAY",
+        profileTitle: "PROFILE",
+        profileTier: "PLATINUM ATHLETE",
+        profileStreak: "Streak",
+        profileWorkouts: "Workouts",
+        profileExercises: "Exercises",
+        btnNotifications: "ENABLE NOTIFICATIONS",
+        btnReset: "RESET DATA",
+        confirmTitle: "Reset Data",
+        confirmMsg: "All your workout data will be deleted. This action cannot be undone.",
+        confirmCancel: "Cancel",
+        confirmReset: "Reset",
+        notifNotSupported: "Your browser does not support notifications.",
+        notifGranted: "Notifications enabled!",
+        notifDenied: "Notification permission denied.",
+        programTitles: {
+            "Monday": "LOWER BODY + CORE",
+            "Tuesday": "UPPER BODY + CORE",
+            "Wednesday": "ACTIVE RECOVERY",
+            "Thursday": "LEG SCULPT",
+            "Friday": "CORE INTENSE",
+            "Saturday": "FULL BODY",
+            "Sunday": "REST DAY"
+        },
+        exerciseNames: {
+            "Tempolu Yürüyüş": "Brisk Walking",
+            "Esneme": "Stretching"
+        }
+    },
+    tr: {
+        days: {
+            "Monday": "Pazartesi", "Tuesday": "Salı", "Wednesday": "Çarşamba",
+            "Thursday": "Perşembe", "Friday": "Cuma", "Saturday": "Cumartesi", "Sunday": "Pazar"
+        },
+        months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+                 "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+        streakLabel: "gün",
+        headerTitle: "GÜNLÜK ANTRENMAN",
+        statCompleted: "TAMAMLANAN",
+        statMoves: "HAREKET",
+        statTotal: "TOPLAM",
+        navToday: "BUGÜN",
+        navWeek: "HAFTA",
+        navProfile: "PROFİL",
+        restDay: "DİNLENME GÜNÜ",
+        restSubtitle: "Bugün dinlen, yarın daha güçlü gel",
+        allDoneText: "BUGÜNKÜ ANTRENMAN TAMAMLANDI",
+        weeklyPlan: "HAFTALIK PLAN",
+        weekRest: "DİNLENME",
+        weekDone: "TAMAM",
+        weekToday: "BUGÜN",
+        profileTitle: "PROFİL",
+        profileTier: "PLATINUM ATHLETE",
+        profileStreak: "Seri",
+        profileWorkouts: "Antrenman",
+        profileExercises: "Hareket",
+        btnNotifications: "BİLDİRİMLERİ AÇ",
+        btnReset: "VERİLERİ SIFIRLA",
+        confirmTitle: "Verileri Sıfırla",
+        confirmMsg: "Tüm antrenman verilerin silinecek. Bu işlem geri alınamaz.",
+        confirmCancel: "İptal",
+        confirmReset: "Sıfırla",
+        notifNotSupported: "Tarayıcın bildirimleri desteklemiyor.",
+        notifGranted: "Bildirimler aktif!",
+        notifDenied: "Bildirim izni reddedildi.",
+        programTitles: {
+            "Monday": "ALT GÖV + CORE",
+            "Tuesday": "ÜST GÖV + CORE",
+            "Wednesday": "AKTİF DİNLENME",
+            "Thursday": "BACAK SCULPT",
+            "Friday": "CORE YOĞUN",
+            "Saturday": "TÜM VÜCUT",
+            "Sunday": "DİNLENME GÜNÜ"
+        },
+        exerciseNames: {}
+    }
+};
+
+let currentLang = localStorage.getItem('nyr0_lang') || 'en';
+
+function t(key) {
+    return TRANSLATIONS[currentLang][key] || key;
+}
+
+function getLocalizedDay(dayName) {
+    return TRANSLATIONS[currentLang].days[dayName] || dayName;
+}
+
+function getLocalizedMonth(monthIdx) {
+    return TRANSLATIONS[currentLang].months[monthIdx];
+}
+
+function getLocalizedTitle(dayName) {
+    return TRANSLATIONS[currentLang].programTitles[dayName] || PROGRAM[dayName].title;
+}
+
+function getLocalizedExercise(name) {
+    return TRANSLATIONS[currentLang].exerciseNames[name] || name;
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('nyr0_lang', lang);
+    document.documentElement.lang = lang;
+    // Update static HTML elements
+    document.querySelector('.streak-label').textContent = t('streakLabel');
+    document.querySelector('[data-view="today"] .nav-label').textContent = t('navToday');
+    document.querySelector('[data-view="week"] .nav-label').textContent = t('navWeek');
+    document.querySelector('[data-view="profile"] .nav-label').textContent = t('navProfile');
+    document.querySelectorAll('.stat-label')[0].textContent = t('statCompleted');
+    document.querySelectorAll('.stat-label')[1].textContent = t('statMoves');
+    document.querySelectorAll('.stat-label')[2].textContent = t('statTotal');
+    renderDate();
+    renderView();
+    updateStats();
+}
+
 const PROGRAM = {
     "Monday": {
         title: "ALT GÖV + CORE",
@@ -74,37 +214,32 @@ const PROGRAM = {
 
 const DAY_MAP = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-const TR_DAYS = {
-    "Monday": "Pazartesi",
-    "Tuesday": "Salı",
-    "Wednesday": "Çarşamba",
-    "Thursday": "Perşembe",
-    "Friday": "Cuma",
-    "Saturday": "Cumartesi",
-    "Sunday": "Pazar"
-};
-
-const TR_MONTHS = [
-    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
-];
 
 let currentView = 'today';
 
 // ─── Init ───
 function init() {
+    document.documentElement.lang = currentLang;
+    // Set static labels from translations
+    document.querySelector('.streak-label').textContent = t('streakLabel');
+    document.querySelector('[data-view="today"] .nav-label').textContent = t('navToday');
+    document.querySelector('[data-view="week"] .nav-label').textContent = t('navWeek');
+    document.querySelector('[data-view="profile"] .nav-label').textContent = t('navProfile');
+    document.querySelectorAll('.stat-label')[0].textContent = t('statCompleted');
+    document.querySelectorAll('.stat-label')[1].textContent = t('statMoves');
+    document.querySelectorAll('.stat-label')[2].textContent = t('statTotal');
     renderDate();
     renderView();
     updateStats();
 }
 
-// ─── Date (Automatic - Turkish) ───
+// ─── Date (Localized) ───
 function renderDate() {
     const d = new Date();
     const day = d.getDate();
-    const month = TR_MONTHS[d.getMonth()];
+    const month = getLocalizedMonth(d.getMonth());
     const year = d.getFullYear();
-    const dayName = TR_DAYS[DAY_MAP[d.getDay()]];
+    const dayName = getLocalizedDay(DAY_MAP[d.getDay()]);
 
     document.getElementById('current-date').textContent = `${day} ${month} ${year}`;
     document.getElementById('current-day').textContent = dayName;
@@ -127,14 +262,14 @@ function renderView() {
 function renderToday(container) {
     const dayName = DAY_MAP[new Date().getDay()];
     const data = PROGRAM[dayName];
-    document.getElementById('main-heading').textContent = data.title;
+    document.getElementById('main-heading').textContent = getLocalizedTitle(dayName);
 
     if (data.items.length === 0) {
         container.innerHTML = `
             <div class="rest-day">
                 <div class="rest-emoji">${data.emoji}</div>
-                <div class="rest-title">DİNLENME GÜNÜ</div>
-                <div class="rest-subtitle">Bugün dinlen, yarın daha güçlü gel</div>
+                <div class="rest-title">${t('restDay')}</div>
+                <div class="rest-subtitle">${t('restSubtitle')}</div>
             </div>
         `;
         return;
@@ -151,7 +286,7 @@ function renderToday(container) {
         card.style.animationDelay = `${i * 0.06}s`;
         card.innerHTML = `
             <div class="ex-info">
-                <span class="ex-name">${item.n}</span>
+                <span class="ex-name">${getLocalizedExercise(item.n)}</span>
                 <span class="ex-meta">${item.s}</span>
             </div>
             <div class="ex-check">
@@ -172,14 +307,14 @@ function renderToday(container) {
         allDone.className = 'all-done';
         allDone.innerHTML = `
             <div class="all-done-emoji">🏆</div>
-            <div class="all-done-text">BUGÜNKÜ ANTRENMAN TAMAMLANDI</div>
+            <div class="all-done-text">${t('allDoneText')}</div>
         `;
         container.appendChild(allDone);
     }
 }
 
 function renderWeek(container) {
-    document.getElementById('main-heading').textContent = 'HAFTALIK PLAN';
+    document.getElementById('main-heading').textContent = t('weeklyPlan');
 
     const grid = document.createElement('div');
     grid.className = 'week-grid';
@@ -203,41 +338,42 @@ function renderWeek(container) {
 
         if (data.items.length === 0) {
             statusClass = 'rest';
-            statusText = 'DİNLENME';
+            statusText = t('weekRest');
         } else if (isToday) {
             const done = getDone(day);
             const pct = Math.round((done.length / data.items.length) * 100);
             if (pct === 100) {
                 statusClass = 'completed';
-                statusText = 'TAMAM';
+                statusText = t('weekDone');
             } else if (pct > 0) {
                 statusClass = 'partial';
                 statusText = `%${pct}`;
             } else {
                 statusClass = 'upcoming';
-                statusText = 'BUGÜN';
+                statusText = t('weekToday');
             }
         } else if (isPast) {
             const done = getDoneForWeekDay(day);
             const pct = data.items.length > 0 ? Math.round((done.length / data.items.length) * 100) : 0;
             if (pct === 100) {
                 statusClass = 'completed';
-                statusText = 'TAMAM';
+                statusText = t('weekDone');
             } else if (pct > 0) {
                 statusClass = 'partial';
                 statusText = `%${pct}`;
             }
         }
 
+        const localDay = getLocalizedDay(day);
         const card = document.createElement('div');
         card.className = `week-card${isToday ? ' is-today' : ''}${isPast && !isToday ? ' is-past' : ''}`;
         card.style.animationDelay = `${i * 0.05}s`;
         card.innerHTML = `
             <div class="week-left">
-                <div class="week-day-num">${TR_DAYS[day].substring(0, 2).toUpperCase()}</div>
+                <div class="week-day-num">${localDay.substring(0, 2).toUpperCase()}</div>
                 <div class="week-day-info">
-                    <span class="week-day-name">${TR_DAYS[day]}</span>
-                    <span class="week-day-workout">${data.emoji} ${data.title}</span>
+                    <span class="week-day-name">${localDay}</span>
+                    <span class="week-day-workout">${data.emoji} ${getLocalizedTitle(day)}</span>
                 </div>
             </div>
             ${statusText ? `<span class="week-status ${statusClass}">${statusText}</span>` : ''}
@@ -249,7 +385,7 @@ function renderWeek(container) {
 }
 
 function renderProfile(container) {
-    document.getElementById('main-heading').textContent = 'PROFİL';
+    document.getElementById('main-heading').textContent = t('profileTitle');
 
     const streak = getStreak();
     const totalWorkouts = getTotalWorkouts();
@@ -259,26 +395,33 @@ function renderProfile(container) {
         <div class="profile-view">
             <div class="profile-avatar">N</div>
             <h2 class="profile-name">NYR0</h2>
-            <span class="profile-tier">PLATINUM ATHLETE</span>
+            <span class="profile-tier">${t('profileTier')}</span>
 
             <div class="profile-stats">
                 <div class="profile-stat">
                     <span class="profile-stat-val">${streak}</span>
-                    <span class="profile-stat-label">Seri</span>
+                    <span class="profile-stat-label">${t('profileStreak')}</span>
                 </div>
                 <div class="profile-stat">
                     <span class="profile-stat-val">${totalWorkouts}</span>
-                    <span class="profile-stat-label">Antrenman</span>
+                    <span class="profile-stat-label">${t('profileWorkouts')}</span>
                 </div>
                 <div class="profile-stat">
                     <span class="profile-stat-val">${totalExercises}</span>
-                    <span class="profile-stat-label">Hareket</span>
+                    <span class="profile-stat-label">${t('profileExercises')}</span>
                 </div>
             </div>
 
+            <div class="lang-toggle-wrapper">
+                <button class="lang-toggle" onclick="setLanguage(currentLang === 'en' ? 'tr' : 'en')">
+                    <span class="lang-option ${currentLang === 'en' ? 'active' : ''}">EN</span>
+                    <span class="lang-option ${currentLang === 'tr' ? 'active' : ''}">TR</span>
+                </button>
+            </div>
+
             <div class="profile-actions">
-                <button class="profile-btn primary" onclick="requestNotif()">BİLDİRİMLERİ AÇ</button>
-                <button class="profile-btn danger" onclick="confirmReset()">VERİLERİ SIFIRLA</button>
+                <button class="profile-btn primary" onclick="requestNotif()">${t('btnNotifications')}</button>
+                <button class="profile-btn danger" onclick="confirmReset()">${t('btnReset')}</button>
             </div>
 
             <div class="profile-version">V2.0 NYR0 BUILD</div>
@@ -386,7 +529,7 @@ function updateStats() {
 
     const progress = total > 0 ? Math.round((done.length / total) * 100) : 0;
 
-    document.getElementById('stat-progress').textContent = `%${progress}`;
+    document.getElementById('stat-progress').textContent = `${progress}%`;
     document.getElementById('ring-fill').setAttribute('stroke-dasharray', `${progress}, 100`);
     document.getElementById('stat-done-count').textContent = done.length;
     document.getElementById('stat-total').textContent = total;
@@ -409,14 +552,14 @@ function switchView(v) {
 // ─── Notifications ───
 function requestNotif() {
     if (!('Notification' in window)) {
-        alert('Tarayıcın bildirimleri desteklemiyor.');
+        alert(t('notifNotSupported'));
         return;
     }
     Notification.requestPermission().then(p => {
         if (p === 'granted') {
-            alert('Bildirimler aktif!');
+            alert(t('notifGranted'));
         } else {
-            alert('Bildirim izni reddedildi.');
+            alert(t('notifDenied'));
         }
     });
 }
@@ -427,11 +570,11 @@ function confirmReset() {
     overlay.className = 'confirm-overlay';
     overlay.innerHTML = `
         <div class="confirm-box">
-            <div class="confirm-title">Verileri Sıfırla</div>
-            <div class="confirm-msg">Tüm antrenman verilerin silinecek. Bu işlem geri alınamaz.</div>
+            <div class="confirm-title">${t('confirmTitle')}</div>
+            <div class="confirm-msg">${t('confirmMsg')}</div>
             <div class="confirm-actions">
-                <button class="confirm-btn cancel" onclick="this.closest('.confirm-overlay').remove()">İptal</button>
-                <button class="confirm-btn confirm" onclick="resetData()">Sıfırla</button>
+                <button class="confirm-btn cancel" onclick="this.closest('.confirm-overlay').remove()">${t('confirmCancel')}</button>
+                <button class="confirm-btn confirm" onclick="resetData()">${t('confirmReset')}</button>
             </div>
         </div>
     `;
